@@ -44,71 +44,36 @@ def GetScore(index_code):
     sma120 = ta.SMA(close, 120)
     sma120T = sma120[-1:][0]
     
-    # 1,2 破线&拐头
     if closeT > sma20T:
-        score = positive_status.BrokenLine
-        print(score)
         if sma20T > sma20Y:
-            score = positive_status.TurnHead
-            print(score)
+            if sma20T > sma60T:
+                if sma60T > sma120T:
+                    bias=(sma60T-sma120T)/sma120T
+                    if bias > 0.03:
+                        score = positive_status.Bias
+                    else:
+                        score = positive_status.Arrange
+                else:
+                    score = positive_status.Cross
+            else:
+                score = positive_status.TurnHead
+        else:
+            score = positive_status.BrokenLine
     else:
-        # 空方. 1,2 破线&拐头
-        score = negative_status.BrokenLine
-        print(score)
-        if sma20T < sma20Y:
-            score = negative_status.TurnHead
-            print(score)
-
-     # 3交叉；满足2为前提
-    if sma20T > sma20Y:
-        if sma20T > sma60T:
-            score = positive_status.Cross
-            print(score)
-        else:
-            score = positive_status.TurnHead
-            print(score+0.5)
-    else:
-        # 空方
-        if sma20T < sma60T:
-            score = negative_status.Cross
-            print(score)
-        else:
-            score = negative_status.TurnHead
-            print(score+(-0.5))
-    # 4排列；满足3为前提
-    if sma20T > sma60T:
-        if sma60T > sma120T:
-            score = positive_status.Arrange
-            print(score)
-        else:
-            score = positive_status.Cross
-            print(score+0.5)
-    else:
-        # 空方
-        if sma60T < sma120T:
-            score = negative_status.Arrange
-            print(score)
-        else:
-            score = negative_status.Cross
-            print(score+(-0.5))
-    # 5 乖离；满足4为前提
-    if sma60T > sma120T:
-        bias=(sma60T-sma120T)/sma120T
-        if bias > 0.03:
-            score = positive_status.Bias
-            print(score)
-        else:
-            score = positive_status.Arrange
-            print(score + 0.5)
-    else:
-        # 空方
-        bias = (sma60T - sma120T) / sma120T
-        if bias < -0.03:
-            score = negative_status.Bias
-            print(score)
-        else:
-            score = negative_status.Arrange
-            print(score+(-0.5))
+         if sma20T < sma20Y:
+             if sma20T < sma60T:
+                 if sma60T < sma120T:
+                     bias=(sma60T-sma120T)/sma120T
+                     if bias < 0.03:
+                         score = negative_status.Bias
+                     else:
+                         score = negative_status.Arrange
+                 else:
+                     score = negative_status.Cross
+             else:
+                 score = negative_status.TurnHead
+         else:
+             score = negative_status.BrokenLine
 
     return score
 
